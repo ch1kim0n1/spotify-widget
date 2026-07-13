@@ -17,9 +17,23 @@ or sponsored by Spotify AB.
 
 _A live playback session: artwork, title, context, transport, progress, next item, and session timers._
 
-![Resolving state](docs/screenshots/checking.png)
+![Stale playback](docs/screenshots/stale.png)
 
-_The connection prompt shown while the app resolves the local Spotify client and account playback state._
+_Stale state: the widget shows the last known track with a desaturated artwork badge and warning signal._
+
+![Connection required](docs/screenshots/auth.png)
+
+_The connection prompt when Spotify authorization is needed to access playback context and queue._
+
+![Error state](docs/screenshots/error.png)
+
+_An error banner overlay when a playback command fails — the widget stays functional and reports the failure._
+
+### Full UI state taxonomy
+
+![All UI states](docs/screenshots/all-states.png)
+
+_All 16 renderable states: playing, paused, stale, podcast, local file, advertisement, end of queue, warning, error, command pending, and six connection prompts (auth required, Spotify closed, no active device, offline, rate limited, client ID required)._
 
 ## Product behavior
 
