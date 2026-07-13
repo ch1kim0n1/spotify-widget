@@ -1,0 +1,26 @@
+{
+  "lastRun": "2026-07-12",
+  "releaseTarget": "entire product (v0.1.0)",
+  "verdict": "Production Ready (conditional on signing credentials + manual smoke tests)",
+  "gateResults": {
+    "pnpmCheck": "pass (format, lint, typecheck, 7 tests, build)",
+    "cargoFmt": "pass",
+    "cargoClippy": "pass (-D warnings)",
+    "cargoTest": "pass (13 tests)",
+    "pnpmAudit": "pass (no known high vulns)"
+  },
+  "issuesFixedThisRun": [
+    {
+      "id": "P1-1",
+      "title": "release.yml used `secrets` in step-level if: conditionals (parse-time failure)",
+      "fix": "Moved secret-existence checks to job-level env vars (HAS_WINDOWS_CERT, HAS_APPLE_CERT) and gated steps on env context."
+    }
+  ],
+  "openItems": [
+    "P2: cargo audit / cargo-deny not run locally (CI runs them) — run before tagging",
+    "P2: Native smoke tests (Windows/macOS) are manual per docs/release-checklist.md and not yet executed",
+    "P2: No release artifacts built locally (requires signing credentials for production candidate)",
+    "P3: Screenshots are dev-fixture and built-empty states; replace with real signed-build screenshots at release time"
+  ],
+  "criticalPath": []
+}
