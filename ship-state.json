@@ -69,6 +69,7 @@
     "staging_gap_rule_triggered": false
   },
   "gate_results": {
+    "cold_clone": "pass (frozen install, 8 tests, and production build)",
     "pnpm_check": "pass (format, lint, typecheck, 8 tests, production build)",
     "cargo_fmt": "pass",
     "cargo_clippy": "pass (-D warnings)",
