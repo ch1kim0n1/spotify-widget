@@ -1,0 +1,58 @@
+[package]
+name = "spotify-companion-widget"
+version = "0.1.0"
+description = "A compact cross-platform companion for an existing Spotify playback session."
+authors = ["Vladislav Kondratyev"]
+license = "GPL-3.0-only"
+edition = "2024"
+rust-version = "1.95"
+
+[lib]
+name = "spotify_companion_widget_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+async-trait = "0.1.89"
+atomic-write-file = "0.3.0"
+base64 = "0.22.1"
+chrono = { version = "0.4.45", features = ["serde"] }
+directories = "6.0.0"
+keyring = "4.1.4"
+open = "5.4.0"
+rand = "0.10.2"
+reqwest = { version = "0.13.4", default-features = false, features = ["form", "json", "rustls"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+sha2 = "0.11.0"
+sysinfo = "0.39.6"
+tauri = { version = "2.11.5", features = ["tray-icon", "image-png"] }
+tauri-plugin-autostart = "2.5.1"
+tauri-plugin-dialog = "2.7.1"
+tauri-plugin-single-instance = "2.4.2"
+thiserror = "2.0.18"
+tokio = { version = "1.52.3", features = ["macros", "rt-multi-thread", "sync", "time", "net", "io-util"] }
+tracing = "0.1.44"
+tracing-appender = "0.2.5"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "json"] }
+url = "2.5.8"
+uuid = { version = "1.23.5", features = ["v4", "serde"] }
+webbrowser = "1.2.1"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
+
+[target."cfg(windows)".dependencies]
+windows = { version = "0.62.2", features = ["Media_Control", "Foundation", "Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_System_Threading", "Win32_System_Power", "Win32_Graphics_Gdi"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2", version = "2.0.1" }
+
+[dev-dependencies]
+tempfile = "3.27.0"

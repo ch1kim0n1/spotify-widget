@@ -1,0 +1,163 @@
+/*
+ * Adapted from AudioUI theme and interaction styles.
+ * Copyright (c) 2026 Tylium.
+ * Copyright (c) 2026 Vladislav Kondratyev (widget-specific modifications).
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
+:root {
+  --audioui-primary-color: #63dd83;
+  --audioui-primary-50: color-mix(in srgb, var(--audioui-primary-color) 50%, transparent);
+  --audioui-primary-20: color-mix(in srgb, var(--audioui-primary-color) 20%, transparent);
+  --audioui-adaptive-color: #eef6f0;
+  --audioui-adaptive-50: color-mix(in srgb, var(--audioui-adaptive-color) 50%, transparent);
+  --audioui-adaptive-20: color-mix(in srgb, var(--audioui-adaptive-color) 20%, transparent);
+  --audioui-roundness-base: 0.72;
+  --audioui-highlight-effect: brightness(1.13) contrast(1.02) drop-shadow(0 0 10px var(--audioui-primary-20));
+  --audioui-highlight-duration: 80ms;
+}
+
+.transport-button {
+  position: relative;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  overflow: visible;
+  color: var(--audioui-adaptive-color);
+  background: transparent;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.transport-button > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transition:
+    filter var(--audioui-highlight-duration) linear,
+    transform var(--audioui-highlight-duration) ease-out;
+}
+
+.transport-button__shadow {
+  fill: rgb(0 0 0 / 42%);
+}
+
+.transport-button__surface {
+  fill: rgb(255 255 255 / 7%);
+  transition: fill var(--audioui-highlight-duration) linear;
+}
+
+.transport-button__edge {
+  fill: transparent;
+  stroke: rgb(255 255 255 / 13%);
+  stroke-width: 1.5;
+}
+
+.transport-button__icon {
+  z-index: 1;
+  display: grid;
+  width: 17px;
+  height: 17px;
+  place-items: center;
+  pointer-events: none;
+}
+
+.transport-button__icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.transport-button[data-primary] {
+  width: 42px;
+  height: 42px;
+  color: #07120a;
+}
+
+.transport-button[data-primary] .transport-button__surface {
+  fill: var(--audioui-primary-color);
+}
+
+.transport-button[data-primary] .transport-button__edge {
+  stroke: color-mix(in srgb, var(--audioui-primary-color) 70%, white);
+}
+
+.transport-button:hover:not(:disabled) > svg,
+.transport-button:focus-visible > svg {
+  filter: var(--audioui-highlight-effect);
+}
+
+.transport-button:focus-visible::after {
+  position: absolute;
+  inset: -2px;
+  content: "";
+  border: 2px solid var(--audioui-primary-color);
+  border-radius: 16px;
+}
+
+.transport-button:active:not(:disabled) > svg {
+  transform: translateY(1.5px) scale(0.97);
+}
+
+.transport-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.transport-button__pending {
+  position: absolute;
+  z-index: 2;
+  inset: 4px;
+  border: 1.5px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: audioui-spin 700ms linear infinite;
+}
+
+.playback-progress {
+  height: 4px;
+  min-width: 0;
+}
+
+.playback-progress svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.playback-progress__track {
+  fill: var(--audioui-adaptive-20);
+}
+
+.playback-progress__value {
+  fill: var(--audioui-primary-color);
+  filter: drop-shadow(0 0 2px var(--audioui-primary-50));
+}
+
+.playback-progress[data-stale] {
+  opacity: 0.5;
+}
+
+@keyframes audioui-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transport-button > svg {
+    transition: none;
+  }
+
+  .transport-button__pending {
+    animation-duration: 1.8s;
+  }
+}

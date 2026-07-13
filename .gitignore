@@ -1,0 +1,20 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.local
+src-tauri/target/
+src-tauri/gen/
+src-tauri/.tauri/
+*.log
+
+# The design reference is intentionally not shipped.
+audio-ui-templates/
+
+# Signing material never belongs in source control.
+*.p12
+*.pfx
+*.cer
+*.key
+*.mobileprovision
