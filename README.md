@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="app-icon.svg" width="128" alt="Spotify Companion Widget logo" />
+  <img src="docs/screenshots/logo.png" width="128" alt="Spotify Companion Widget logo" />
 </p>
 
 <h1 align="center">Spotify Companion Widget</h1>
