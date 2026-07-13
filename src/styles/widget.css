@@ -1,7 +1,8 @@
+@import "@fontsource-variable/manrope";
+
 :root {
   color: #eef6f0;
   font-family:
-    Inter,
     ui-sans-serif,
     -apple-system,
     BlinkMacSystemFont,
@@ -260,8 +261,7 @@ button {
   white-space: nowrap;
   color: var(--title);
   font-family:
-    Manrope,
-    Inter,
+    "Manrope Variable",
     ui-sans-serif,
     -apple-system,
     BlinkMacSystemFont,
@@ -400,8 +400,7 @@ button {
   margin: 0;
   color: var(--title);
   font-family:
-    Manrope,
-    Inter,
+    "Manrope Variable",
     ui-sans-serif,
     -apple-system,
     BlinkMacSystemFont,

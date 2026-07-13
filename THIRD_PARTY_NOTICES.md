@@ -20,6 +20,11 @@ Copyright (c) 2026 Tylium.
 AudioUI is available under GPL-3.0-only or the Tylium Evolutive License Framework. This project
 uses the GPL-3.0-only option. See `LICENSE`.
 
+## Manrope
+
+The packaged interface includes the Manrope variable font by Mikhail Sharanda, distributed under the
+SIL Open Font License 1.1 through `@fontsource-variable/manrope`.
+
 ## Spotify
 
 Spotify is a trademark of Spotify AB. Spotify Companion Widget is an independent project and is not

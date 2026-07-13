@@ -6,15 +6,62 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
+  preflight:
+    name: Release preflight
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.95"
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm audit --prod --audit-level high
+      - name: Check Rust formatting
+        working-directory: src-tauri
+        run: cargo fmt --check
+      - name: Lint Rust
+        working-directory: src-tauri
+        run: cargo clippy --all-targets -- -D warnings
+      - name: Test Rust
+        working-directory: src-tauri
+        run: cargo test
+      - uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: src-tauri
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          manifest-path: src-tauri/Cargo.toml
+          command-arguments: licenses sources
+
   windows:
     name: Windows installers
+    needs: preflight
     runs-on: windows-latest
+    permissions:
+      contents: read
     env:
       SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-      HAS_WINDOWS_CERT: ${{ secrets.WINDOWS_CERTIFICATE_BASE64 != '' }}
+      HAS_SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID != '' }}
+      HAS_WINDOWS_SIGNING: ${{ secrets.WINDOWS_CERTIFICATE_BASE64 != '' && secrets.WINDOWS_CERTIFICATE_PASSWORD != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -32,8 +79,19 @@ jobs:
           workspaces: src-tauri
       - run: pnpm install --frozen-lockfile
 
+      - name: Require production release credentials
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: pwsh
+        run: |
+          if ($env:HAS_SPOTIFY_CLIENT_ID -ne "true") {
+            throw "SPOTIFY_CLIENT_ID is required for a tagged release."
+          }
+          if ($env:HAS_WINDOWS_SIGNING -ne "true") {
+            throw "Windows certificate and password are required for a tagged release."
+          }
+
       - name: Import Windows signing certificate
-        if: env.HAS_WINDOWS_CERT == 'true'
+        if: env.HAS_WINDOWS_SIGNING == 'true'
         shell: pwsh
         env:
           CERTIFICATE_BASE64: ${{ secrets.WINDOWS_CERTIFICATE_BASE64 }}
@@ -67,10 +125,15 @@ jobs:
 
   macos:
     name: Universal macOS app
+    needs: preflight
     runs-on: macos-14
+    permissions:
+      contents: read
     env:
       SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-      HAS_APPLE_CERT: ${{ secrets.APPLE_CERTIFICATE_BASE64 != '' }}
+      HAS_SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID != '' }}
+      HAS_APPLE_SIGNING: ${{ secrets.APPLE_CERTIFICATE_BASE64 != '' && secrets.APPLE_CERTIFICATE_PASSWORD != '' && secrets.APPLE_SIGNING_IDENTITY != '' }}
+      HAS_APPLE_NOTARIZATION: ${{ secrets.APPLE_ID != '' && secrets.APPLE_APP_SPECIFIC_PASSWORD != '' && secrets.APPLE_TEAM_ID != '' }}
       APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
@@ -93,8 +156,24 @@ jobs:
           workspaces: src-tauri
       - run: pnpm install --frozen-lockfile
 
+      - name: Require production release credentials
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          if [[ "$HAS_SPOTIFY_CLIENT_ID" != "true" ]]; then
+            echo "::error::SPOTIFY_CLIENT_ID is required for a tagged release."
+            exit 1
+          fi
+          if [[ "$HAS_APPLE_SIGNING" != "true" ]]; then
+            echo "::error::Apple certificate, password, and signing identity are required for a tagged release."
+            exit 1
+          fi
+          if [[ "$HAS_APPLE_NOTARIZATION" != "true" ]]; then
+            echo "::error::Apple notarization credentials are required for a tagged release."
+            exit 1
+          fi
+
       - uses: apple-actions/import-codesign-certs@v3
-        if: env.HAS_APPLE_CERT == 'true'
+        if: env.HAS_APPLE_SIGNING == 'true'
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
           p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -114,6 +193,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [windows, macos]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/download-artifact@v4
         with:

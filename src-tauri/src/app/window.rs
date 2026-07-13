@@ -16,9 +16,6 @@ pub fn show_widget(app: &tauri::AppHandle) -> AppResult<()> {
     {
         let window = main_window(app)?;
         window
-            .set_always_on_top(true)
-            .map_err(|error| AppError::Window(error.to_string()))?;
-        window
             .show()
             .map_err(|error| AppError::Window(error.to_string()))?;
         window

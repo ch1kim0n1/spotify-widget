@@ -118,6 +118,12 @@ describe("Spotify Companion Widget", () => {
     await waitFor(() => expect(bridge.hideWidget).toHaveBeenCalledOnce());
   });
 
+  it("reports a failed native state subscription", async () => {
+    bridge.subscribeToViewState.mockRejectedValueOnce(new Error("State updates unavailable."));
+    render(<App />);
+    expect(await screen.findByRole("status")).toHaveTextContent("State updates unavailable.");
+  });
+
   it("has no automated accessibility violations in the playback state", async () => {
     const { container } = render(<App />);
     await screen.findByRole("heading", { name: "Signal Path" });

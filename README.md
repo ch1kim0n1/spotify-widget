@@ -155,8 +155,9 @@ macOS:
 - `APPLE_TEAM_ID`
 
 `.github/workflows/release.yml` imports signing identities only on hosted runners. Tauri submits and
-staples macOS notarization when all Apple notarization variables are present. Missing signing
-credentials produce development artifacts, not a production release candidate.
+staples macOS notarization when all Apple notarization variables are present. Tagged releases fail
+before packaging when the Spotify client ID or either platform's signing credentials are incomplete;
+manual workflow runs may still produce unsigned development artifacts.
 
 ## Local data and privacy
 

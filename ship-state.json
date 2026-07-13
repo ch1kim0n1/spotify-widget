@@ -1,26 +1,159 @@
 {
-  "lastRun": "2026-07-12",
-  "releaseTarget": "entire product (v0.1.0)",
-  "verdict": "Production Ready (conditional on signing credentials + manual smoke tests)",
-  "gateResults": {
-    "pnpmCheck": "pass (format, lint, typecheck, 7 tests, build)",
-    "cargoFmt": "pass",
-    "cargoClippy": "pass (-D warnings)",
-    "cargoTest": "pass (13 tests)",
-    "pnpmAudit": "pass (no known high vulns)"
-  },
-  "issuesFixedThisRun": [
+  "last_run": "2026-07-13T15:00:20.9044453-05:00",
+  "verdict": "Ready for Internal Testing",
+  "release_target": "entire product (v0.1.0)",
+  "ship_decision_applies_to": "Windows and macOS desktop application, documentation, CI, and release workflow",
+  "surface_map": [
     {
-      "id": "P1-1",
-      "title": "release.yml used `secrets` in step-level if: conditionals (parse-time failure)",
-      "fix": "Moved secret-existence checks to job-level env vars (HAS_WINDOWS_CERT, HAS_APPLE_CERT) and gated steps on env context."
+      "surface": "Desktop widget",
+      "type": "Desktop",
+      "path": "src",
+      "user_facing": true,
+      "release_critical": "Yes",
+      "changed": true,
+      "audit_depth": "Full",
+      "blast_radius_upgrade": null
+    },
+    {
+      "surface": "Native application",
+      "type": "Desktop",
+      "path": "src-tauri",
+      "user_facing": true,
+      "release_critical": "Yes",
+      "changed": true,
+      "audit_depth": "Full",
+      "blast_radius_upgrade": null
+    },
+    {
+      "surface": "Release pipeline",
+      "type": "CI/CD",
+      "path": ".github/workflows",
+      "user_facing": false,
+      "release_critical": "Yes",
+      "changed": true,
+      "audit_depth": "Full",
+      "blast_radius_upgrade": null
+    },
+    {
+      "surface": "Documentation",
+      "type": "Docs",
+      "path": "README.md and docs",
+      "user_facing": true,
+      "release_critical": "Medium",
+      "changed": true,
+      "audit_depth": "Targeted",
+      "blast_radius_upgrade": null
     }
   ],
-  "openItems": [
-    "P2: cargo audit / cargo-deny not run locally (CI runs them) — run before tagging",
-    "P2: Native smoke tests (Windows/macOS) are manual per docs/release-checklist.md and not yet executed",
-    "P2: No release artifacts built locally (requires signing credentials for production candidate)",
-    "P3: Screenshots are dev-fixture and built-empty states; replace with real signed-build screenshots at release time"
+  "blast_radius": [
+    {
+      "changed_file": ".github/workflows/release.yml",
+      "direct_surface": "Release pipeline",
+      "downstream_surfaces": ["Windows installers", "macOS application", "GitHub release"],
+      "risk_level": "High",
+      "required_audit_upgrade": "Full"
+    },
+    {
+      "changed_file": "src/styles/widget.css",
+      "direct_surface": "Desktop widget",
+      "downstream_surfaces": ["Windows application", "macOS application"],
+      "risk_level": "Medium",
+      "required_audit_upgrade": "Targeted"
+    }
   ],
-  "criticalPath": []
+  "environment_matrix": {
+    "local": true,
+    "test_ci": true,
+    "staging": false,
+    "production_smoke": false,
+    "staging_gap_rule_triggered": false
+  },
+  "gate_results": {
+    "pnpm_check": "pass (format, lint, typecheck, 8 tests, production build)",
+    "cargo_fmt": "pass",
+    "cargo_clippy": "pass (-D warnings)",
+    "cargo_test": "pass (13 tests; 50-repeat stress run also passed)",
+    "native_windows_compile": "pass (debug, no bundle)",
+    "workflow_lint": "pass (actionlint 1.7.12)",
+    "pnpm_audit": "pass (no known vulnerabilities)",
+    "cargo_audit": "pass (no vulnerabilities; 17 allowed transitive maintenance warnings)",
+    "latest_remote_ci": "pass on Windows, macOS, dependency audit, and security audit"
+  },
+  "issues_filed": [],
+  "fixes_applied": [
+    {
+      "description": "Preserve the user's Always on Top preference when reopening the widget",
+      "file": "src-tauri/src/app/window.rs",
+      "verified": true
+    },
+    {
+      "description": "Handle native state-subscription failures and cover the error path with a test",
+      "file": "src/hooks/useCompanionState.ts",
+      "verified": true
+    },
+    {
+      "description": "Block tagged releases unless Spotify, signing, and notarization credentials are complete",
+      "file": ".github/workflows/release.yml",
+      "verified": true
+    },
+    {
+      "description": "Add a release preflight gate and least-privilege workflow permissions",
+      "file": ".github/workflows/release.yml",
+      "verified": true
+    },
+    {
+      "description": "Bundle Manrope locally so packaged rendering is offline and CSP-compatible",
+      "file": "src/styles/widget.css",
+      "verified": true
+    },
+    {
+      "description": "Add weekly dependency maintenance for npm, Cargo, and GitHub Actions",
+      "file": ".github/dependabot.yml",
+      "verified": true
+    }
+  ],
+  "claims_tested": [
+    {
+      "claim": "Automated frontend and Rust verification commands pass",
+      "result": "pass"
+    },
+    {
+      "claim": "Windows native application compiles",
+      "result": "pass"
+    },
+    {
+      "claim": "Windows and macOS native compile in CI",
+      "result": "pass"
+    },
+    {
+      "claim": "Signed NSIS/MSI and notarized universal macOS artifacts can be published",
+      "result": "blocked"
+    },
+    {
+      "claim": "Spotify authorization, playback, queue, transport, and persistence work end to end",
+      "result": "blocked"
+    }
+  ],
+  "critical_path": [
+    "Configure Spotify, Windows signing, and Apple signing/notarization secrets in GitHub Actions",
+    "Run the Windows and macOS native smoke checklists with real Spotify playback",
+    "Create a signed release candidate and verify every downloaded artifact on clean machines"
+  ],
+  "sections_audited": [
+    "First Impression",
+    "Documentation",
+    "Setup",
+    "Tests",
+    "UI/UX",
+    "Error Handling",
+    "Performance",
+    "Security",
+    "Consistency",
+    "Release Engineering"
+  ],
+  "sections_skipped": [
+    "Signed packaging and notarization: credentials unavailable",
+    "Spotify account journey: client ID, user authorization, and physical macOS runner unavailable"
+  ],
+  "diff_scope": "full"
 }

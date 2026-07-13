@@ -60,10 +60,20 @@ export function useCompanionState(): {
 
     void subscribeToViewState((nextState) => {
       if (mounted) setState(nextState);
-    }).then((unlisten) => {
-      if (mounted) unsubscribe = unlisten;
-      else unlisten();
-    });
+    })
+      .then((unlisten) => {
+        if (mounted) unsubscribe = unlisten;
+        else unlisten();
+      })
+      .catch((error: unknown) => {
+        if (!mounted) return;
+        setState((current) => ({
+          ...current,
+          statusMessage:
+            error instanceof Error ? error.message : "Unable to receive companion state updates.",
+          statusTone: "critical",
+        }));
+      });
 
     return () => {
       mounted = false;
