@@ -1,8 +1,10 @@
 use tauri::{App, AppHandle, Manager};
+#[allow(deprecated)]
 use tauri_nspanel::{ManagerExt, WebviewWindowExt, cocoa::appkit::NSWindowCollectionBehavior};
 
 use crate::error::{AppError, AppResult};
 
+#[allow(deprecated)]
 pub fn configure_panel(app: &mut App) -> AppResult<()> {
     app.set_activation_policy(tauri::ActivationPolicy::Accessory);
     let window = app
