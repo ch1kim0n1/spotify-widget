@@ -89,4 +89,4 @@ jobs:
 
       - uses: EmbarkStudios/cargo-deny-action@v2
         with:
-          arguments: --manifest-path src-tauri/Cargo.toml check licenses sources
+          arguments: --manifest-path src-tauri/Cargo.toml licenses sources

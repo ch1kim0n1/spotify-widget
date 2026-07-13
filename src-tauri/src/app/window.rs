@@ -10,7 +10,7 @@ const MIN_VISIBLE: i32 = 24;
 pub fn show_widget(app: &tauri::AppHandle) -> AppResult<()> {
     #[cfg(target_os = "macos")]
     {
-        return crate::platform::macos::show_panel(app);
+        crate::platform::macos::show_panel(app)
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -30,7 +30,7 @@ pub fn show_widget(app: &tauri::AppHandle) -> AppResult<()> {
 pub fn hide_widget(app: &tauri::AppHandle) -> AppResult<()> {
     #[cfg(target_os = "macos")]
     {
-        return crate::platform::macos::hide_panel(app);
+        crate::platform::macos::hide_panel(app)
     }
     #[cfg(not(target_os = "macos"))]
     {
