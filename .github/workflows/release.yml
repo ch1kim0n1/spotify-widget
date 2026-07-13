@@ -115,7 +115,7 @@ jobs:
 
       - run: pnpm tauri build --bundles nsis,msi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: spotify-companion-widget-windows
           path: |
@@ -180,7 +180,7 @@ jobs:
 
       - run: pnpm tauri build --target universal-apple-darwin --bundles app,dmg
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: spotify-companion-widget-macos
           path: |
