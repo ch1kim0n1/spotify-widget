@@ -1,8 +1,14 @@
-# Spotify Companion Widget
+<p align="center">
+  <img src="app-icon.svg" width="128" alt="Spotify Companion Widget logo" />
+</p>
 
-A compact Windows tray and macOS menu-bar companion for an existing Spotify playback session.
-Spotify Companion Widget displays the current item, context, queue, progress, and session timers and
-provides previous, play/pause, and next controls without replacing the Spotify client.
+<h1 align="center">Spotify Companion Widget</h1>
+
+<p align="center">
+  A compact Windows tray and macOS menu-bar companion for an existing Spotify playback session.<br />
+  Displays the current item, context, queue, progress, and session timers and provides previous,
+  play/pause, and next controls without replacing the Spotify client.
+</p>
 
 The application uses Tauri 2, React 18, TypeScript, and Rust. Windows integrates with GSMTC for
 low-latency local media behavior; the Spotify Web API supplies account playback, queue, context, and
