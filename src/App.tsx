@@ -40,7 +40,6 @@ export default function App() {
       data-loading={loading || undefined}
       data-tauri-drag-region
     >
-      <div className="widget__ambient" aria-hidden="true" />
       <header className="widget__header" data-tauri-drag-region>
         <div className="widget__identity" data-tauri-drag-region>
           <span className="widget__signal" aria-hidden="true" />
